@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="cordova.js"></script>
+<script src="cordova_plugins.js"></script>
+<script src="web-bluetooth-shim.js"></script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>micro:bit Remote</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.27/interact.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
+<link rel="stylesheet" href="styles.css?v=3">
+</head>
+<body>
+<div class="app app-scaler">
+
+<header class="hero-header serial-header-safe">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-logo fun-logo">
+        <img class="logo-img" src="logo.svg" alt="Logo" onerror="this.remove();"/>
+        
+        <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="logoGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#00d4ff"/>
+              <stop offset="50%" stop-color="#aa78ff"/>
+              <stop offset="100%" stop-color="#ff5a8a"/>
+            </linearGradient>
+            <linearGradient id="logoGrad2" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#3fdc7d"/>
+              <stop offset="100%" stop-color="#ffbf3a"/>
+            </linearGradient>
+          </defs>
+          <rect x="10" y="15" width="100" height="50" rx="8" fill="url(#logoGrad1)" opacity="0.15"/>
+          <rect x="15" y="20" width="90" height="40" rx="6" fill="none" stroke="url(#logoGrad1)" stroke-width="2"/>
+          <circle cx="35" cy="40" r="8" fill="url(#logoGrad2)"/>
+          <circle cx="85" cy="40" r="8" fill="url(#logoGrad2)"/>
+          <rect x="50" y="28" width="20" height="4" rx="2" fill="#fff" opacity="0.8"/>
+          <rect x="50" y="36" width="20" height="4" rx="2" fill="#fff" opacity="0.6"/>
+          <rect x="50" y="44" width="20" height="4" rx="2" fill="#fff" opacity="0.4"/>
+          <text x="60" y="70" text-anchor="middle" font-family="system-ui" font-size="10" font-weight="900" fill="url(#logoGrad1)">μ:bit</text>
+        </svg>
+      </div>
+
+      <div class="hero-titles">
+        <div class="hero-title">MICRO:BIT REMOTE</div>
+        <div class="hero-subtitle">Build your own controller</div>
+      </div>
+    </div>
+
+    <div class="hero-center">
+      <div class="bismillah">بسم الله الرحمن الرحيم</div>
+    </div>
+
+    <div class="hero-tabs tabs">
+      <button class="tab active" data-tab="builder">✏️ Build</button>
+      <button class="tab" data-tab="runtime">▶️ Play</button>
+    </div>
+
+    <div class="hero-right">
+      <button id="soundBtn" class="hero-pill hero-pill-sound" title="Sound">
+        <span class="pill-dot"></span>
+        <span class="pill-text">Sound On</span>
+      </button>
+
+      <button id="langBtn" class="hero-pill hero-pill-lang" title="Language">
+        <span class="pill-dot"></span>
+        <span class="pill-text">🇬🇧</span>
+      </button>
+
+      <button id="bleBtn" class="hero-pill hero-pill-ble" title="Connection">
+        <span class="pill-dot"></span>
+        <span class="pill-text">Connect</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  <div id="templateModal" class="template-modal">
+    <div class="template-content">
+      <h2>🎨 Choose a Template!</h2>
+      <p>Pick one to start building your remote</p>
+      <div class="templates-grid">
+        <div class="template-card" data-tpl="gamepad"><div class="template-icon">🎮</div><div class="template-name">Game Pad</div></div>
+        <div class="template-card" data-tpl="robot"><div class="template-icon">🤖</div><div class="template-name">Robot</div></div>
+        <div class="template-card" data-tpl="mixer"><div class="template-icon">🎵</div><div class="template-name">DJ Mixer</div></div>
+        <div class="template-card" data-tpl="racing"><div class="template-icon">🏎️</div><div class="template-name">Race Car</div></div>
+        <div class="template-card" data-tpl="lights"><div class="template-icon">💡</div><div class="template-name">Lights</div></div>
+        <div class="template-card" data-tpl="blank"><div class="template-icon">✨</div><div class="template-name">Start Fresh</div></div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div class="view builder-view active">
+      <div class="builder-header">
+        <input type="text" id="titleInput" class="title-input" placeholder="🏷️ Name your remote..." maxlength="25">
+        <span class="builder-branding">Powered by Workshop-Diy</span>
+      </div>
+      <div class="builder-main">
+        <div class="canvas-wrap">
+          <div class="build-toolbar">
+            <div class="build-toolbar-group" aria-label="History">
+              <button class="build-toolbar-btn" id="undoBtn" title="Undo (Ctrl+Z)" disabled>
+                <span class="btn-icon" aria-hidden="true">↶</span>
+                <span class="btn-label">Undo</span>
+              </button>
+              <button class="build-toolbar-btn" id="redoBtn" title="Redo (Ctrl+Y)" disabled>
+                <span class="btn-icon" aria-hidden="true">↷</span>
+                <span class="btn-label">Redo</span>
+              </button>
+            </div>
+            <div class="build-toolbar-group" aria-label="Layout">
+              <button class="build-toolbar-btn auto-arrange-btn" id="autoArrangeBtn" title="Auto-arrange widgets">
+                <span class="btn-icon" aria-hidden="true">✨</span>
+                <span class="btn-label">Tidy</span>
+              </button>
+              <button class="build-toolbar-btn magic-btn" id="magicBtn" title="Random colors and styles for all widgets">
+                <span class="btn-icon" aria-hidden="true">🪄</span>
+                <span class="btn-label">Magic</span>
+              </button>
+            </div>
+            <div class="build-toolbar-group theme-group" aria-label="Theme">
+              <span class="build-toolbar-group-label">Theme</span>
+              <div class="theme-selector">
+                <div class="theme-dot active" data-theme="dark"   title="Dark theme"></div>
+                <div class="theme-dot"        data-theme="ocean"  title="Ocean theme"></div>
+                <div class="theme-dot"        data-theme="space"  title="Space theme"></div>
+                <div class="theme-dot"        data-theme="candy"  title="Fire theme"></div>
+                <div class="theme-dot"        data-theme="forest" title="Forest theme"></div>
+              </div>
+            </div>
+          </div>
+          <div class="canvas-hint">👆 Tap a widget below, then <span>tap here</span> to place it!</div>
+          <div id="canvas" class="canvas"><div id="widgetsLayer"></div></div>
+        </div>
+
+        <aside class="builder-side">
+          <div class="collapsible-card" id="actionsCard">
+            <button class="collapsible-card-toggle" id="actionsToggle" type="button" aria-expanded="true" aria-controls="actionsBody">
+              <span class="collapsible-card-title">🎮 Actions</span>
+              <span class="collapsible-card-chevron">▾</span>
+            </button>
+            <div class="collapsible-card-body action-card" id="actionsBody">
+              <button class="header-btn btn-demo" id="demoBtn">🎮 Try All Widgets!</button>
+              <button class="header-btn btn-code" id="exportJsonBtn">📦 Export</button>
+              <button class="header-btn btn-code" id="importJsonBtn">📂 Import</button>
+              <button class="header-btn btn-template" id="templateBtn">🎨 Templates</button>
+              <button class="header-btn btn-code" id="codeBtn">📄 Code</button>
+              <button class="header-btn btn-delete" id="deleteBtn">🗑️</button>
+              <button class="header-btn btn-delete" id="clearCacheBtn">🧹 Clear Cache</button>
+            </div>
+          </div>
+
+          <div class="palette-card collapsible-card" id="paletteCard">
+            <button class="palette-card-toggle collapsible-card-toggle" id="paletteToggle" type="button" aria-expanded="true" aria-controls="paletteBody">
+              <span class="palette-card-title collapsible-card-title">🧩 Widgets</span>
+              <span class="palette-card-chevron collapsible-card-chevron">▾</span>
+            </button>
+            <div class="palette-card-body collapsible-card-body" id="paletteBody">
+              <div class="palette">
+                <div class="palette-item" data-type="button"><div class="palette-icon">👆</div><div class="palette-name">Button</div></div>
+                <div class="palette-item" data-type="slider"><div class="palette-icon">🎚️</div><div class="palette-name">Slider</div></div>
+                <div class="palette-item" data-type="toggle"><div class="palette-icon">🔘</div><div class="palette-name">Switch</div></div>
+                <div class="palette-item" data-type="joystick"><div class="palette-icon">🕹️</div><div class="palette-name">Joystick</div></div>
+                <div class="palette-item" data-type="dpad"><div class="palette-icon">✛</div><div class="palette-name">D-Pad</div></div>
+                <div class="palette-item" data-type="xypad"><div class="palette-icon">📍</div><div class="palette-name">XY Pad</div></div>
+                <div class="palette-item" data-type="led"><div class="palette-icon">💡</div><div class="palette-name">Light</div></div>
+                <div class="palette-item" data-type="label"><div class="palette-icon">🏷️</div><div class="palette-name">Label</div></div>
+                <div class="palette-item" data-type="gauge"><div class="palette-icon">🧭</div><div class="palette-name">Gauge</div></div>
+                <div class="palette-item" data-type="graph"><div class="palette-icon">📈</div><div class="palette-name">Graph</div></div>
+                <div class="palette-item" data-type="battery"><div class="palette-icon">🔋</div><div class="palette-name">Battery</div></div>
+                <div class="palette-item" data-type="timer"><div class="palette-icon">⏱️</div><div class="palette-name">Timer</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="propsPanel" class="props-panel props-card">
+            <div class="props-title">
+              🛠️ Widget Properties
+              <div class="props-title-actions">
+                <button id="propsCollapseBtn" class="props-close-btn props-collapse-btn" type="button" title="Collapse">–</button>
+                <button id="propsPanelClose" class="props-close-btn" type="button">✕</button>
+              </div>
+            </div>
+            <div id="propsEmpty" class="props-empty">
+              <div class="props-empty-icon">🛠️</div>
+              <div class="props-empty-title">Nothing selected</div>
+              <div class="props-empty-hint">Tap any widget on the canvas to change its color, label, and size.</div>
+            </div>
+            <div id="propsForm" class="props-form" style="display:none;"></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <div class="view runtime-view">
+      <button id="backToBuildBtn" class="back-to-build-btn">← Back to Build</button>
+      <div class="runtime-top-btns">
+        <button id="arrangeModeBtn" class="arrange-mode-btn">📐 Arrange</button>
+        <button id="fullscreenBtn" class="fullscreen-btn">⛶ Fullscreen</button>
+      </div>
+      <button id="fullscreenExitBtn" class="fullscreen-exit-btn">✕</button>
+      <span class="fullscreen-version">v1.0</span>
+      <div id="quickActionsMenu" class="quick-actions-menu">
+        <button class="quick-action-btn" data-action="duplicate">📋 Duplicate</button>
+        <button class="quick-action-btn" data-action="color">🎨 Random Color</button>
+        <button class="quick-action-btn" data-action="lock">🔒 Lock/Unlock</button>
+        <button class="quick-action-btn" data-action="front">⬆️ Bring Front</button>
+        <button class="quick-action-btn" data-action="back">⬇️ Send Back</button>
+        <button class="quick-action-btn danger" data-action="delete">🗑️ Delete</button>
+      </div>
+      <div id="connectPrompt" class="connect-box">
+        <div class="connect-icon">📡</div>
+        <div class="connect-text">Connect your micro:bit!</div>
+        <button id="connectBtn" class="connect-btn">🔗 Connect</button>
+      </div>
+      <div id="runtimeContent">
+        <div id="runtimeTitle"></div>
+        <div id="arrangeHint" class="arrange-hint" style="display:none;">
+          👆 Drag widgets to rearrange • Tap "Done" when finished
+        </div>
+        <div id="runtimeGrid"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- Tutorial Overlay -->
+<div id="tutorialOverlay" class="tutorial-overlay hidden">
+  <div class="tutorial-card">
+    <div class="tutorial-icon" id="tutorialIcon">👋</div>
+    <div class="tutorial-title" id="tutorialTitle">Welcome!</div>
+    <div class="tutorial-text" id="tutorialText">Let's build your first remote control!</div>
+    <div class="tutorial-dots">
+      <div class="tutorial-dot active" data-step="0"></div>
+      <div class="tutorial-dot" data-step="1"></div>
+      <div class="tutorial-dot" data-step="2"></div>
+      <div class="tutorial-dot" data-step="3"></div>
+    </div>
+    <button class="tutorial-btn" id="tutorialNextBtn">Let's Go! 🚀</button>
+    <button class="tutorial-skip" id="tutorialSkipBtn">Skip Tutorial</button>
+  </div>
+</div>
+
+<div id="loadingOverlay" class="loading-overlay" aria-hidden="true">
+  <div class="loading-card">
+    <div class="loading-title">🧩 Loading your remote...</div>
+    <div class="loading-sub" id="loadingSub">Getting layout from micro:bit</div>
+    <div class="loading-bar">
+      <div class="loading-bar-fill" id="loadingBarFill"></div>
+    </div>
+    <div class="loading-pct" id="loadingPct">0%</div>
+  </div>
+</div>
+
+<div id="modalBg" class="modal-bg">
+  <div class="modal">
+    <div id="modalTitle" class="modal-title"></div>
+    <pre id="modalCode" class="modal-code"></pre>
+    <div class="modal-buttons">
+      <button class="modal-btn primary" id="copyBtn">📋 Copy</button>
+      <button class="modal-btn primary" id="downloadBtn">💾 Save</button>
+      <button class="modal-btn flash" id="flashBtn">⚡ Flash to micro:bit</button>
+      <button class="modal-btn secondary" id="modalClose">✖️ Close</button>
+    </div>
+    <div id="flashProgress" class="flash-progress" style="display:none;">
+      <div class="flash-status" id="flashStatus">Preparing...</div>
+      <div class="flash-bar-bg"><div class="flash-bar" id="flashBar"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden iframe for MakeCode compilation -->
+<iframe id="makecodeFrame" style="display:none;position:absolute;left:-9999px;width:1px;height:1px;" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>
+<input type="file" id="fileInput" accept=".json" hidden>
+<input type="file" id="jsonFileInput" accept="application/json" style="display:none" />
+
+<!-- Logs System -->
+<div id="logTab" title="Logs (Ctrl+Shift+L)">LOGS</div>
+<div id="logCard" class="collapsed" aria-live="polite">
+  <div id="logHead">
+    <button id="logToggle" aria-expanded="false" title="Collapse / Expand">▸</button>
+    <div id="logTitle">🧾 LOGS <span id="logCount">0</span></div>
+    <div id="logActions">
+      <button class="log-btn" id="logClear">Clear</button>
+      <button class="log-btn" id="logExportTxt">TXT</button>
+      <button class="log-btn" id="logExportJson">JSON</button>
+    </div>
+  </div>
+  <div id="logFilters"></div>
+  <div id="logBody"></div>
+</div>
+
+<!-- Zoom Controls -->
+<div id="zoomControls" class="zoom-controls">
+  <button class="zoom-btn" id="zoomInBtn" title="Zoom In">+</button>
+  <div class="zoom-level" id="zoomLevel">100%</div>
+  <button class="zoom-btn" id="zoomOutBtn" title="Zoom Out">−</button>
+  <button class="zoom-btn" id="zoomFitBtn" title="Fit to Screen">⊡</button>
+  <button class="zoom-btn" id="zoomResetBtn" title="Reset to 100%">1:1</button>
+</div>
+
+<script src="script.js?v=2"></script>
+</body>
+</html>

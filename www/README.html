@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Micro:bit Remote Builder - Documentation</title>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --surface: #16213e;
+            --card: #1f3460;
+            --accent: #00d4ff;
+            --secondary: #ff9500;
+            --green: #00e676;
+            --orange: #ff9100;
+            --blue: #0099ff;
+            --red: #ff5252;
+            --yellow: #ffea00;
+            --text: #ffffff;
+            --text-dim: #8892b0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 0;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--surface), var(--card));
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 3px solid var(--accent);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0,212,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(255,149,0,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            height: 60px;
+            filter: drop-shadow(0 0 10px rgba(0,123,255,0.5));
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+        }
+        
+        .badges {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .badge {
+            background: var(--card);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border: 2px solid;
+        }
+        
+        .badge.blue { border-color: var(--blue); color: var(--blue); }
+        .badge.green { border-color: var(--green); color: var(--green); }
+        .badge.orange { border-color: var(--orange); color: var(--orange); }
+        
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Table of Contents */
+        .toc {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 30px 0;
+            border: 2px solid var(--card);
+        }
+        
+        .toc h2 {
+            color: var(--accent);
+            margin-bottom: 16px;
+            font-size: 1.4rem;
+        }
+        
+        .toc ul {
+            list-style: none;
+            columns: 2;
+            column-gap: 40px;
+        }
+        
+        .toc li {
+            padding: 6px 0;
+        }
+        
+        .toc a {
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .toc a:hover {
+            color: var(--accent);
+        }
+        
+        /* Sections */
+        section {
+            margin: 40px 0;
+        }
+        
+        h2 {
+            color: var(--accent);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--card);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h3 {
+            color: var(--secondary);
+            font-size: 1.4rem;
+            margin: 30px 0 15px;
+        }
+        
+        h4 {
+            color: var(--green);
+            font-size: 1.2rem;
+            margin: 25px 0 10px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            color: var(--text-dim);
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid var(--card);
+        }
+        
+        .card.highlight {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, var(--surface), rgba(0,212,255,0.1));
+        }
+        
+        /* Widget Cards */
+        .widget-card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 20px 0;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .widget-card.input { border-color: var(--blue); }
+        .widget-card.output { border-color: var(--green); }
+        
+        .widget-card h4 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .widget-icon {
+            font-size: 2rem;
+        }
+        
+        /* Code blocks */
+        pre {
+            background: #0d1117;
+            border-radius: 12px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 15px 0;
+            border: 1px solid #30363d;
+        }
+        
+        code {
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            color: #e6edf3;
+        }
+        
+        .inline-code {
+            background: var(--card);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--accent);
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--surface);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--card);
+        }
+        
+        th {
+            background: var(--card);
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: rgba(0,212,255,0.05);
+        }
+        
+        /* Lists */
+        ul, ol {
+            margin: 15px 0 15px 30px;
+            color: var(--text-dim);
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        /* Steps */
+        .steps {
+            counter-reset: step;
+            list-style: none;
+            margin-left: 0;
+        }
+        
+        .steps li {
+            counter-increment: step;
+            position: relative;
+            padding-left: 50px;
+            margin: 20px 0;
+        }
+        
+        .steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            width: 36px;
+            height: 36px;
+            background: var(--accent);
+            color: var(--bg);
+            font-weight: bold;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Diagram */
+        .diagram {
+            background: #0d1117;
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+            color: var(--text-dim);
+            margin: 20px 0;
+        }
+        
+        .diagram .arrow { color: var(--accent); }
+        .diagram .label { color: var(--secondary); }
+        
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        /* Feature boxes */
+        .feature-box {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid var(--card);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        
+        .feature-box:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+        
+        .feature-box .emoji {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .feature-box h4 {
+            color: var(--text);
+            margin: 0 0 10px;
+        }
+        
+        /* Tips */
+        .tip {
+            background: rgba(0,230,118,0.1);
+            border-left: 4px solid var(--green);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+        
+        .tip::before {
+            content: '💡 TIP: ';
+            font-weight: bold;
+            color: var(--green);
+        }
+        
+        .warning {
+            background: rgba(255,149,0,0.1);
+            border-left: 4px solid var(--orange);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+        
+        .warning::before {
+            content: '⚠️ WARNING: ';
+            font-weight: bold;
+            color: var(--orange);
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--surface);
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 3px solid var(--card);
+        }
+        
+        .footer h3 {
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+        
+        .footer .powered-by {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, var(--card), var(--surface));
+            padding: 12px 24px;
+            border-radius: 30px;
+            border: 2px solid var(--blue);
+            margin: 20px 0;
+        }
+        
+        .footer .powered-by img {
+            height: 30px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8rem; }
+            .toc ul { columns: 1; }
+            h2 { font-size: 1.4rem; }
+            pre { padding: 12px; font-size: 0.8rem; }
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Syntax highlighting */
+        .keyword { color: #ff7b72; }
+        .string { color: #a5d6ff; }
+        .comment { color: #8b949e; }
+        .function { color: #d2a8ff; }
+        .number { color: #79c0ff; }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+    <div class="logo-container">
+        <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="-92.820084 179.975632 6.000000 3.214096">
+            <path fill="#00d4ff" d="M-90.26918,180.70665C-90.270096,180.703674,-90.280693,180.55484,-90.292725,180.3759C-90.304756,180.19696,-90.315605,180.042282,-90.316826,180.032166L-90.319046,180.013763L-90.29628,180.013763C-90.283752,180.013748,-90.25869,180.012115,-90.240585,180.010117C-90.222481,180.008118,-90.191841,180.005646,-90.172501,180.004608L-90.137344,180.002731L-90.128738,180.131226C-90.124008,180.201889,-90.119133,180.269699,-90.117897,180.281921L-90.115662,180.304123L-90.05497,180.20639C-90.021591,180.152634,-89.977379,180.08139,-89.956726,180.048065L-89.919182,179.987488L-89.883324,179.985062C-89.863602,179.983734,-89.824806,179.980759,-89.797112,179.978455C-89.769424,179.976166,-89.739342,179.974884,-89.73027,179.975632L-89.713783,179.976974L-89.825653,180.145996L-89.937531,180.315033L-89.796638,180.490601C-89.719147,180.587158,-89.655746,180.667526,-89.655746,180.669174C-89.655746,180.670837,-89.657356,180.672195,-89.659317,180.672195C-89.676155,180.672195,-89.856628,180.684464,-89.861404,180.685928C-89.865883,180.687317,-89.896164,180.651016,-89.971275,180.554199C-90.028305,180.480698,-90.076393,180.421448,-90.07814,180.422516C-90.079887,180.423599,-90.086746,180.433975,-90.093384,180.445587L-90.105461,180.466675L-90.097374,180.581726C-90.091408,180.66658,-90.090439,180.697479,-90.093674,180.699478C-90.099167,180.702866,-90.137032,180.7061,-90.21048,180.709442C-90.257515,180.711578,-90.267807,180.71109,-90.26918,180.70665z"/>
+            <path fill="#00d4ff" d="M-89.190971,180.7686C-89.267868,180.753281,-89.31105,180.739975,-89.360039,180.716522C-89.393906,180.700302,-89.471527,180.651245,-89.480576,180.640335C-89.484718,180.635345,-89.482971,180.627808,-89.446373,180.493073C-89.44014,180.470108,-89.428429,180.473007,-89.40416,180.50351C-89.35006,180.571503,-89.267303,180.622406,-89.189331,180.635666C-89.152946,180.641846,-89.149734,180.641846,-89.129295,180.635406C-89.09346,180.624115,-89.075447,180.597748,-89.081604,180.565582C-89.085762,180.543793,-89.121902,180.514221,-89.183189,180.482422C-89.254944,180.44519,-89.27681,180.430908,-89.309555,180.399933C-89.365524,180.347,-89.382957,180.291809,-89.367203,180.217453C-89.349838,180.135468,-89.298691,180.084976,-89.207352,180.059616C-89.16906,180.048981,-89.099213,180.048294,-89.053474,180.058105C-88.98037,180.073776,-88.906212,180.104935,-88.843803,180.14621C-88.810745,180.16806,-88.807495,180.171295,-88.809486,180.180176C-88.810699,180.185577,-88.820007,180.220505,-88.830177,180.257782C-88.847977,180.323044,-88.849014,180.325516,-88.858116,180.324509C-88.863312,180.323944,-88.870895,180.31871,-88.874962,180.312897C-88.886063,180.297012,-88.932678,180.252243,-88.951851,180.239044C-89.003326,180.203629,-89.07032,180.181305,-89.113388,180.185211C-89.166359,180.190018,-89.195839,180.22757,-89.177078,180.266357C-89.168106,180.284912,-89.14418,180.302139,-89.078835,180.337082C-88.97522,180.392517,-88.924667,180.434921,-88.900993,180.486298C-88.888092,180.514282,-88.885109,180.566086,-88.894295,180.602661C-88.921547,180.711212,-89.010704,180.773865,-89.135971,180.772491C-89.156639,180.772263,-89.181389,180.770508,-89.190971,180.7686z"/>
+            <path fill="#00d4ff" d="M-91.104111,180.90361C-91.134857,180.834915,-91.198944,180.691757,-91.246529,180.585495C-91.294121,180.479233,-91.332542,180.391785,-91.331917,180.391159C-91.330269,180.389511,-91.248558,180.352615,-91.135277,180.302368C-91.080956,180.278275,-91.021782,180.253952,-91.003784,180.248306C-90.923584,180.22316,-90.848717,180.234344,-90.799507,180.278824C-90.775833,180.300217,-90.757965,180.329971,-90.742996,180.372955C-90.732986,180.401703,-90.731194,180.412506,-90.731262,180.44368C-90.731339,180.474075,-90.733147,180.485123,-90.741638,180.507187C-90.753166,180.53714,-90.772163,180.572006,-90.780914,180.579269C-90.784096,180.581909,-90.786697,180.585449,-90.786697,180.587128C-90.786697,180.590454,-90.750763,180.609756,-90.581421,180.697388C-90.520706,180.72879,-90.466957,180.757034,-90.461975,180.760147C-90.4533,180.765549,-90.456924,180.767578,-90.547188,180.807983C-90.599037,180.831192,-90.645187,180.85022,-90.64975,180.850266C-90.654312,180.850327,-90.720131,180.816483,-90.796013,180.775055L-90.933975,180.699768L-90.960068,180.711792C-90.974419,180.718399,-90.986549,180.72406,-90.987015,180.72435C-90.987488,180.724655,-90.965302,180.775085,-90.937721,180.836411C-90.910133,180.897751,-90.887093,180.950424,-90.886513,180.953476C-90.885788,180.957291,-90.909706,180.96991,-90.96286,180.993774C-91.005432,181.012878,-91.042053,181.028519,-91.044235,181.028519C-91.046425,181.028519,-91.073364,180.972321,-91.104111,180.90361z"/>
+            <path fill="#00d4ff" d="M-88.328873,181.18129C-88.367035,181.1548,-88.399017,181.132355,-88.399948,181.131424C-88.400887,181.130493,-88.36216,181.072723,-88.313889,181.003052C-88.265625,180.933365,-88.227539,180.875137,-88.229256,180.873642C-88.232262,180.871017,-88.36467,180.779251,-88.401207,180.754456L-88.418991,180.742401L-88.505783,180.867996C-88.55352,180.937073,-88.594093,180.993607,-88.59594,180.993622C-88.59967,180.993668,-88.741692,180.896652,-88.741692,180.894058C-88.741692,180.892731,-88.562958,180.634018,-88.382385,180.373978C-88.362411,180.345215,-88.344566,180.321136,-88.342712,180.320465C-88.340332,180.319611,-88.229614,180.393921,-88.196304,180.418747C-88.195633,180.41925,-88.226578,180.465042,-88.265076,180.520508C-88.303574,180.575974,-88.335899,180.623642,-88.336906,180.62645C-88.338058,180.629654,-88.30468,180.655014,-88.246178,180.695328C-88.195274,180.730423,-88.152,180.759674,-88.150009,180.76033C-88.148026,180.761002,-88.11441,180.715302,-88.075317,180.658768C-88.036224,180.602249,-88.002808,180.556,-88.00106,180.556C-87.996506,180.556,-87.856689,180.652924,-87.856689,180.656067C-87.856689,180.66153,-88.251923,181.229736,-88.255615,181.229599C-88.257751,181.229523,-88.29071,181.207779,-88.328873,181.18129z"/>
+            <path fill="#00d4ff" d="M-91.754158,181.531448C-91.888771,181.512161,-92.043076,181.366882,-92.082649,181.222183C-92.093285,181.183273,-92.092499,181.109177,-92.081032,181.069366C-92.049042,180.958313,-91.935387,180.846329,-91.824692,180.816788C-91.785378,180.806305,-91.704155,180.807419,-91.663956,180.818985C-91.603546,180.836395,-91.54142,180.875549,-91.484215,180.932281C-91.430611,180.985458,-91.394707,181.040161,-91.374954,181.098755C-91.364899,181.128601,-91.362389,181.143066,-91.360794,181.18042C-91.358604,181.231888,-91.362877,181.260315,-91.379135,181.302338C-91.403221,181.364624,-91.466469,181.439941,-91.530434,181.482498C-91.598885,181.528046,-91.669739,181.543549,-91.754158,181.531448z"/>
+            <path fill="#00d4ff" d="M-92.820084,183.14711L-92.820084,183.104507L-89.824234,183.104507L-86.828384,183.104523L-86.828384,183.147125L-86.828384,183.189728L-89.824234,183.189713L-92.820084,183.189713L-92.820084,183.14711z"/>
+        </svg>
+        <h1>🎮 Micro:bit Remote Builder</h1>
+    </div>
+    <p>Build your own Bluetooth remote controller - No coding required!</p>
+    <div class="badges">
+        <span class="badge blue">Powered by Workshop-DIY.org</span>
+        <span class="badge green">micro:bit V1 & V2</span>
+        <span class="badge orange">Bluetooth BLE</span>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- Table of Contents -->
+    <nav class="toc">
+        <h2>📋 Table of Contents</h2>
+        <ul>
+            <li><a href="#what-is-this">🌟 What is this?</a></li>
+            <li><a href="#features">✨ Features</a></li>
+            <li><a href="#quick-start">🚀 Quick Start</a></li>
+            <li><a href="#how-it-works">🎯 How It Works</a></li>
+            <li><a href="#builder">🔧 The Builder Interface</a></li>
+            <li><a href="#input-widgets">📥 Input Widgets</a></li>
+            <li><a href="#output-widgets">📤 Output Widgets</a></li>
+            <li><a href="#examples">💻 MakeCode Examples</a></li>
+            <li><a href="#protocol">🔌 Bluetooth Protocol</a></li>
+            <li><a href="#troubleshooting">❓ Troubleshooting</a></li>
+        </ul>
+    </nav>
+
+    <!-- What is this -->
+    <section id="what-is-this">
+        <h2>🌟 What is this?</h2>
+        <div class="card highlight">
+            <p><strong>Micro:bit Remote Builder</strong> is a fun web app that lets you create custom Bluetooth remote controllers for your BBC micro:bit!</p>
+            <br>
+            <p>🎨 <strong>Drag & drop</strong> widgets to design your remote</p>
+            <p>📱 <strong>Connect</strong> via Bluetooth from your phone/tablet</p>
+            <p>🎮 <strong>Control</strong> your micro:bit projects wirelessly!</p>
+        </div>
+        
+        <h3>Perfect for:</h3>
+        <div class="grid">
+            <div class="feature-box"><div class="emoji">🤖</div><h4>Robot Control</h4></div>
+            <div class="feature-box"><div class="emoji">🎮</div><h4>Game Controllers</h4></div>
+            <div class="feature-box"><div class="emoji">💡</div><h4>Smart Home</h4></div>
+            <div class="feature-box"><div class="emoji">🏎️</div><h4>RC Cars</h4></div>
+            <div class="feature-box"><div class="emoji">🎵</div><h4>Music Instruments</h4></div>
+            <div class="feature-box"><div class="emoji">🚀</div><h4>Anything!</h4></div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features">
+        <h2>✨ Features</h2>
+        <table>
+            <tr><th>Feature</th><th>Description</th></tr>
+            <tr><td>🎨 Visual Builder</td><td>Drag & drop interface - no coding needed!</td></tr>
+            <tr><td>📱 Works Everywhere</td><td>Phone, tablet, or computer</td></tr>
+            <tr><td>🔵 Bluetooth BLE</td><td>Wireless connection to micro:bit</td></tr>
+            <tr><td>🎮 12 Widget Types</td><td>Buttons, sliders, joysticks, and more!</td></tr>
+            <tr><td>🌍 Multi-language</td><td>English, French, Arabic</td></tr>
+            <tr><td>🎨 Themes</td><td>Multiple color themes to choose from</td></tr>
+            <tr><td>💾 Save & Load</td><td>Export/import your designs</td></tr>
+            <tr><td>📄 Auto Code</td><td>Generates MakeCode automatically!</td></tr>
+        </table>
+    </section>
+
+    <!-- Quick Start -->
+    <section id="quick-start">
+        <h2>🚀 Quick Start</h2>
+        
+        <h3>Step 1: Design Your Remote 🎨</h3>
+        <ol class="steps">
+            <li>Open the app in your browser</li>
+            <li>Click <strong>"✏️ Build"</strong> tab</li>
+            <li>Choose a template OR start fresh</li>
+            <li>Drag widgets onto the canvas</li>
+            <li>Customize colors, labels, and sizes</li>
+        </ol>
+
+        <h3>Step 2: Get the MakeCode 📄</h3>
+        <ol class="steps">
+            <li>Click <strong>"📄 Code"</strong> button</li>
+            <li>Copy the generated code</li>
+            <li>Go to <a href="https://makecode.microbit.org" target="_blank" style="color:var(--accent)">makecode.microbit.org</a></li>
+            <li>Create new project → <strong>JavaScript</strong> mode</li>
+            <li>Paste the code → Click <strong>Download</strong></li>
+        </ol>
+
+        <h3>Step 3: Connect & Play! 🎮</h3>
+        <ol class="steps">
+            <li>Click <strong>"▶️ Play"</strong> tab</li>
+            <li>Click the big <strong>"📡 Tap to Connect!"</strong> button</li>
+            <li>Select your micro:bit from the list</li>
+            <li>Start controlling! 🚀</li>
+        </ol>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works">
+        <h2>🎯 How It Works</h2>
+        <div class="diagram">
+┌─────────────────┐         Bluetooth          ┌─────────────────┐
+│                 │  ◄───────────────────────► │                 │
+│   📱 Your App   │         BLE UART           │  🔲 micro:bit   │
+│   (Phone/PC)    │                            │                 │
+└─────────────────┘                            └─────────────────┘
+        │                                              │
+        │  You press a button                         │
+        │  ─────────────────►  SET btn_fire 1         │
+        │                                              │
+        │                      micro:bit runs code    │
+        │                      and can send back:     │
+        │  UPD led_status 1   ◄─────────────────      │
+        │                                              │
+        </div>
+        
+        <div class="card">
+            <h3>The Magic: 🪄</h3>
+            <ol>
+                <li><strong>You design</strong> a remote with widgets</li>
+                <li><strong>The app generates</strong> MakeCode for your micro:bit</li>
+                <li><strong>The micro:bit stores</strong> your layout and sends it back when connected</li>
+                <li><strong>Both devices talk</strong> using simple text messages over Bluetooth!</li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Builder Interface -->
+    <section id="builder">
+        <h2>🔧 The Builder Interface</h2>
+        
+        <h3>🎛️ Top Bar Buttons</h3>
+        <table>
+            <tr><th>Button</th><th>What it does</th></tr>
+            <tr><td>✏️ <strong>Build</strong></td><td>Design your remote</td></tr>
+            <tr><td>▶️ <strong>Play</strong></td><td>Use your remote</td></tr>
+            <tr><td>🎮 <strong>Demo</strong></td><td>Try all 12 widgets</td></tr>
+            <tr><td>📦 <strong>Export</strong></td><td>Save design as JSON</td></tr>
+            <tr><td>📂 <strong>Import</strong></td><td>Load a saved design</td></tr>
+            <tr><td>📄 <strong>Code</strong></td><td>Get MakeCode for micro:bit</td></tr>
+        </table>
+        
+        <div class="tip">Click a widget type in the palette, then click on the canvas to place it!</div>
+    </section>
+
+    <!-- Input Widgets -->
+    <section id="input-widgets">
+        <h2>📥 Input Widgets (You Control)</h2>
+        <p>These widgets send data <strong>FROM the app TO micro:bit</strong> when you interact with them.</p>
+
+        <!-- Button -->
+        <div class="widget-card input">
+            <h4><span class="widget-icon">👆</span> Button</h4>
+            <p><strong>What it does:</strong> Send a signal when pressed/released</p>
+            <p><strong>Message format:</strong></p>
+            <pre><code>SET button_id 1    ← When pressed
+SET button_id 0    ← When released</code></pre>
+            <p><strong>MakeCode example:</strong></p>
+            <pre><code><span class="comment">// When button is pressed</span>
+<span class="keyword">if</span> (id == <span class="string">"btn_fire"</span> && val == <span class="string">"1"</span>) {
+    <span class="comment">// 🔥 Fire the laser!</span>
+    basic.<span class="function">showIcon</span>(IconNames.Skull)
+    pins.<span class="function">digitalWritePin</span>(DigitalPin.P0, <span class="number">1</span>)
+}
+
+<span class="comment">// When button is released</span>
+<span class="keyword">if</span> (id == <span class="string">"btn_fire"</span> && val == <span class="string">"0"</span>) {
+    basic.<span class="function">clearScreen</span>()
+    pins.<span class="function">digitalWritePin</span>(DigitalPin.P0, <span class="number">0</span>)
+}</code></pre>
+            <p><strong>Use it for:</strong> 🔫 Shooting, 🎵 Sound effects, 💡 Lights on/off, 🚀 Actions</p>
+        </div>
+
+        <!-- Slider -->
+        <div class="widget-card input">
+            <h4><span class="widget-icon">🎚️</span> Slider</h4>
+            <p><strong>What it does:</strong> Send a value from min to max</p>
+            <p><strong>Message format:</strong></p>
+            <pre><code>SET slider_id 75    ← Value between 0-100</code></pre>
+            <p><strong>MakeCode example:</strong></p>
+            <pre><code><span class="comment">// Control motor speed with slider</span>
+<span class="keyword">if</span> (id == <span class="string">"slider_speed"</span>) {
+    <span class="keyword">let</span> speed = <span class="function">parseInt</span>(val)  <span class="comment">// 0 to 100</span>
+    
+    <span class="comment">// Show on LED display</span>
+    led.<span class="function">plotBarGraph</span>(speed, <span class="number">100</span>)
+    
+    <span class="comment">// Control a motor on P0</span>
+    pins.<span class="function">analogWritePin</span>(AnalogPin.P0, speed * <span class="number">10</span>)
+}</code></pre>
+            <p><strong>Use it for:</strong> 🏎️ Speed control, 🔊 Volume, 💡 Brightness, 🤖 Servo angle</p>
+        </div>
+
+        <!-- Toggle -->
+        <div class="widget-card input">
+            <h4><span class="widget-icon">🔘</span> Toggle</h4>
+            <p><strong>What it does:</strong> Switch ON or OFF (like a light switch)</p>
+            <p><strong>Message format:</strong></p>
+            <pre><code>SET toggle_id 1    ← Switched ON
+SET toggle_id 0    ← Switched OFF</code></pre>
+            <p><strong>MakeCode example:</strong></p>
+            <pre><code><span class="comment">// Toggle turbo mode</span>
+<span class="keyword">if</span> (id == <span class="string">"toggle_turbo"</span>) {
+    <span class="keyword">if</span> (val == <span class="string">"1"</span>) {
+        <span class="comment">// 🚀 Turbo ON!</span>
+        basic.<span class="function">showIcon</span>(IconNames.Chessboard)
+        turboMode = <span class="keyword">true</span>
+    } <span class="keyword">else</span> {
+        basic.<span class="function">showIcon</span>(IconNames.Asleep)
+        turboMode = <span class="keyword">false</span>
+    }
+}</code></pre>
+            <p><strong>Use it for:</strong> ⚡ Turbo mode, 🛡️ Shield, 🔦 Flashlight, 🎵 Music on/off</p>
+        </div>
+
+        <!-- Joystick -->
+        <div class="widget-card input">
+            <h4><span class="widget-icon">🕹️</span> Joystick</h4>
+            <p><strong>What it does:</strong> Send direction and distance (like a game controller stick)</p>
+            <p><strong>Message format:</strong></p>
+            <pre><code>SET joystick_id 45 80    ← angle=45°, distance=80%
+SET joystick_id 0 0      ← centered (released)</code></pre>
+            <div class="diagram">
+           270° (up)
+              ↑
+    180° ←    ●    → 0° (right)
+    (left)    ↓
+            90° (down)
+            </div>
+            <p><strong>MakeCode example:</strong></p>
+            <pre><code><span class="comment">// Drive a robot with joystick</span>
+<span class="keyword">if</span> (id == <span class="string">"joy_move"</span>) {
+    <span class="keyword">let</span> parts = val.<span class="function">split</span>(<span class="string">" "</span>)
+    <span class="keyword">let</span> angle = <span class="function">parseInt</span>(parts[<span class="number">0</span>])    <span class="comment">// 0-360°</span>
+    <span class="keyword">let</span> distance = <span class="function">parseInt</span>(parts[<span class="number">1</span>]) <span class="comment">// 0-100</span>
+    
+    <span class="keyword">if</span> (distance > <span class="number">10</span>) {
+        <span class="keyword">if</span> (angle < <span class="number">45</span> || angle >= <span class="number">315</span>) 
+            basic.<span class="function">showArrow</span>(ArrowNames.East)  <span class="comment">// RIGHT</span>
+        <span class="keyword">else if</span> (angle < <span class="number">135</span>) 
+            basic.<span class="function">showArrow</span>(ArrowNames.South) <span class="comment">// DOWN</span>
+        <span class="keyword">else if</span> (angle < <span class="number">225</span>) 
+            basic.<span class="function">showArrow</span>(ArrowNames.West)  <span class="comment">// LEFT</span>
+        <span class="keyword">else</span> 
+            basic.<span class="function">showArrow</span>(ArrowNames.North) <span class="comment">// UP</span>
+    }
+}</code></pre>
+            <p><strong>Use it for:</strong> 🤖 Robot steering, 🎮 Game movement, 🚁 Drone control</p>
+        </div>
+
+        <!-- D-Pad -->
+        <div class="widget-card input">
+            <h4><span class="widget-icon">✛</span> D-Pad</h4>
+            <p><strong>What it does:</strong> Send direction when pressing up/down/left/right buttons</p>
+            <p><strong>Message format:</strong></p>
+            <pre><code>SET dpad_id up 1       ← Up pressed
+SET dpad_id up 0       ← Up released
+SET dpad_id down 1     ← Down pressed
+SET dpad_id left 1     ← Left pressed
+SET dpad_id right 1    ← Right pressed</code></pre>
+            <p><strong>MakeCode example:</strong></p>
+            <pre><code><span class="comment">// Control with D-Pad</span>
+<span class="keyword">if</span> (id == <span class="string">"dpad_nav"</span>) {
+    <span class="keyword">let</span> parts = val.<span class="function">split</span>(<span class="string">" "</span>)
+    <span class="keyword">let</span> direction = parts[<span class="number">0</span>]  <span class="comment">// "up", "down", "left", "right"</span>
+    <span class="keyword">let</span> pressed = parts[<span class="number">1</span>] == <span class="string">"1"</span>
+    
+    <span class="keyword">if</span> (pressed) {
+        basic.<span class="function">clearScreen</span>()
+        <span class="keyword">if</span> (direction == <span class="string">"up"</span>) basic.<span class="function">showArrow</span>(ArrowNames.North)
+        <span class="keyword">if</span> (direction == <span class="string">"down"</span>) basic.<span class="function">showArrow</span>(ArrowNames.South)
+        <span class="keyword">if</span> (direction == <span class="string">"left"</span>) basic.<span class="function">showArrow</span>(ArrowNames.West)
+        <span class="keyword">if</span> (direction == <span class="string">"right"</span>) basic.<span class="function">showArrow</span>(ArrowNames.East)
+    } <span class="keyword">else</span> {
+        basic.<span class="function">clearScreen</span>()
+    }
+}</code></pre>
+            <p><strong>Use it for:</strong> 🎮 Menu navigation, 🤖 Robot movement, 🕹️ Retro games</p>
+        </div>
+
+        <!-- XY Pad -->
+        <div class="widget-card input">
+            <h4><span class="widget-icon">📍</span> XY Pad</h4>
+            <p><strong>What it does:</strong> Send X and Y position (like a touchpad)</p>
+            <p><strong>Message format:</strong></p>
+            <pre><code>SET xypad_id 75 30    ← x=75%, y=30%</code></pre>
+            <p><strong>MakeCode example:</strong></p>
+            <pre><code><span class="comment">// Aim with XY pad</span>
+<span class="keyword">if</span> (id == <span class="string">"xypad_aim"</span>) {
+    <span class="keyword">let</span> parts = val.<span class="function">split</span>(<span class="string">" "</span>)
+    <span class="keyword">let</span> x = <span class="function">parseInt</span>(parts[<span class="number">0</span>])  <span class="comment">// 0-100</span>
+    <span class="keyword">let</span> y = <span class="function">parseInt</span>(parts[<span class="number">1</span>])  <span class="comment">// 0-100</span>
+    
+    <span class="comment">// Show on micro:bit LED (5x5)</span>
+    basic.<span class="function">clearScreen</span>()
+    led.<span class="function">plot</span>(Math.<span class="function">floor</span>(x / <span class="number">25</span>), Math.<span class="function">floor</span>(y / <span class="number">25</span>))
+}</code></pre>
+            <p><strong>Use it for:</strong> 🎯 Aiming, 📸 Pan/tilt camera, 🎨 Drawing</p>
+        </div>
+
+        <!-- Timer -->
+        <div class="widget-card input">
+            <h4><span class="widget-icon">⏱️</span> Timer</h4>
+            <p><strong>What it does:</strong> Start/stop/reset a timer, sends elapsed seconds</p>
+            <p><strong>Message format:</strong></p>
+            <pre><code>SET timer_id 30    ← 30 seconds elapsed</code></pre>
+            <p><strong>MakeCode example:</strong></p>
+            <pre><code><span class="comment">// React to timer</span>
+<span class="keyword">if</span> (id == <span class="string">"timer_game"</span>) {
+    <span class="keyword">let</span> seconds = <span class="function">parseInt</span>(val)
+    
+    <span class="comment">// Beep every 10 seconds</span>
+    <span class="keyword">if</span> (seconds % <span class="number">10</span> == <span class="number">0</span>) {
+        music.<span class="function">playTone</span>(Note.C, music.<span class="function">beat</span>(BeatFraction.Quarter))
+    }
+}</code></pre>
+            <p><strong>Use it for:</strong> ⏱️ Game timer, 🍳 Cooking timer, 🏃 Race countdown</p>
+        </div>
+    </section>
+
+    <!-- Output Widgets -->
+    <section id="output-widgets">
+        <h2>📤 Output Widgets (micro:bit Controls)</h2>
+        <p>These widgets receive data <strong>FROM micro:bit TO the app</strong>. Your micro:bit code sends updates!</p>
+
+        <!-- LED -->
+        <div class="widget-card output">
+            <h4><span class="widget-icon">💡</span> LED</h4>
+            <p><strong>What it does:</strong> Show ON/OFF status (like a light bulb)</p>
+            <p><strong>How to update from micro:bit:</strong></p>
+            <pre><code><span class="comment">// Turn LED ON</span>
+<span class="function">sendValue</span>(<span class="string">"led_status"</span>, <span class="string">"1"</span>)
+
+<span class="comment">// Turn LED OFF</span>
+<span class="function">sendValue</span>(<span class="string">"led_status"</span>, <span class="string">"0"</span>)</code></pre>
+            <p><strong>Use it for:</strong> ⚠️ Warnings, ✅ Status indicators, 🔔 Notifications</p>
+        </div>
+
+        <!-- Label -->
+        <div class="widget-card output">
+            <h4><span class="widget-icon">🏷️</span> Label</h4>
+            <p><strong>What it does:</strong> Display text from micro:bit</p>
+            <p><strong>How to update from micro:bit:</strong></p>
+            <pre><code><span class="comment">// Show score</span>
+<span class="function">sendValue</span>(<span class="string">"label_score"</span>, <span class="string">"Score: 150"</span>)
+
+<span class="comment">// Show temperature</span>
+<span class="function">sendValue</span>(<span class="string">"label_temp"</span>, input.<span class="function">temperature</span>() + <span class="string">"°C"</span>)
+
+<span class="comment">// Show any message!</span>
+<span class="function">sendValue</span>(<span class="string">"label_msg"</span>, <span class="string">"Hello!"</span>)</code></pre>
+            <p><strong>Use it for:</strong> 🏆 Scores, 🌡️ Sensor readings, 💬 Messages</p>
+        </div>
+
+        <!-- Gauge -->
+        <div class="widget-card output">
+            <h4><span class="widget-icon">🧭</span> Gauge</h4>
+            <p><strong>What it does:</strong> Display a value on a dial (like speedometer)</p>
+            <p><strong>How to update from micro:bit:</strong></p>
+            <pre><code><span class="comment">// Send value (0-100 by default)</span>
+<span class="function">sendValue</span>(<span class="string">"gauge_speed"</span>, <span class="string">"75"</span>)
+
+<span class="comment">// Send temperature</span>
+<span class="function">sendValue</span>(<span class="string">"gauge_temp"</span>, <span class="string">""</span> + input.<span class="function">temperature</span>())</code></pre>
+            <p><strong>Use it for:</strong> 🌡️ Temperature, 🔊 Sound level, 🧭 Compass, 🏎️ Speed</p>
+        </div>
+
+        <!-- Graph -->
+        <div class="widget-card output">
+            <h4><span class="widget-icon">📈</span> Graph</h4>
+            <p><strong>What it does:</strong> Display real-time data as a line chart</p>
+            <p><strong>How to update from micro:bit:</strong></p>
+            <pre><code><span class="comment">// Single value</span>
+<span class="function">sendValue</span>(<span class="string">"graph_data"</span>, <span class="string">"42"</span>)
+
+<span class="comment">// Multiple series (comma-separated)</span>
+<span class="function">sendValue</span>(<span class="string">"graph_data"</span>, <span class="string">"42,78,15"</span>)</code></pre>
+            <p><strong>Use it for:</strong> 📊 Sensor data, 📈 Trends, 🎵 Sound waves</p>
+        </div>
+
+        <!-- Battery -->
+        <div class="widget-card output">
+            <h4><span class="widget-icon">🔋</span> Battery</h4>
+            <p><strong>What it does:</strong> Display battery/power level</p>
+            <p><strong>How to update from micro:bit:</strong></p>
+            <pre><code><span class="comment">// Send percentage 0-100</span>
+<span class="function">sendValue</span>(<span class="string">"battery_power"</span>, <span class="string">"75"</span>)</code></pre>
+            <p><strong>Use it for:</strong> 🔋 Battery level, ⛽ Fuel gauge, 💧 Water level</p>
+        </div>
+    </section>
+
+    <!-- Troubleshooting -->
+    <section id="troubleshooting">
+        <h2>❓ Troubleshooting</h2>
+        
+        <div class="warning">Can't connect to micro:bit? Check that Bluetooth is ON and micro:bit shows ❤️ (heart icon)</div>
+        
+        <h4>🔴 Can't connect?</h4>
+        <ul>
+            <li><strong>Check Bluetooth is ON</strong> on your phone/computer</li>
+            <li><strong>Make sure micro:bit shows ❤️</strong> (heart icon = ready)</li>
+            <li><strong>Try refreshing</strong> the page and connecting again</li>
+            <li><strong>Only one device</strong> can connect at a time!</li>
+        </ul>
+        
+        <h4>🔴 Buttons not working?</h4>
+        <ul>
+            <li><strong>Check the code</strong> is flashed to micro:bit</li>
+            <li><strong>Look at serial monitor</strong> in MakeCode to debug</li>
+            <li><strong>Make sure widget IDs match</strong> in code and app</li>
+        </ul>
+        
+        <h4>🔴 micro:bit disconnects?</h4>
+        <ul>
+            <li><strong>Stay close</strong> - Bluetooth range is ~10 meters</li>
+            <li><strong>Check battery</strong> - low power causes disconnects</li>
+        </ul>
+    </section>
+
+    <!-- Protocol -->
+    <section id="protocol">
+        <h2>🔌 Bluetooth Protocol</h2>
+        
+        <h3>Message Format</h3>
+        <table>
+            <tr><th>Direction</th><th>Format</th><th>Example</th></tr>
+            <tr><td>App → micro:bit</td><td><code class="inline-code">SET widget_id value</code></td><td><code class="inline-code">SET slider_speed 75</code></td></tr>
+            <tr><td>micro:bit → App</td><td><code class="inline-code">UPD widget_id value</code></td><td><code class="inline-code">UPD gauge_temp 23</code></td></tr>
+            <tr><td>App → micro:bit</td><td><code class="inline-code">GETCFG</code></td><td>Request layout config</td></tr>
+            <tr><td>micro:bit → App</td><td><code class="inline-code">CFGBEGIN</code></td><td>Start of config</td></tr>
+            <tr><td>micro:bit → App</td><td><code class="inline-code">CFG xxxxx</code></td><td>Config data chunks</td></tr>
+            <tr><td>micro:bit → App</td><td><code class="inline-code">CFGEND</code></td><td>End of config</td></tr>
+        </table>
+    </section>
+
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <h3>🎮 Happy Building! 🚀</h3>
+    <div class="powered-by">
+        <svg height="30" xmlns="http://www.w3.org/2000/svg" viewBox="-92.820084 179.975632 6.000000 3.214096">
+            <path fill="#00d4ff" d="M-90.26918,180.70665C-90.270096,180.703674,-90.280693,180.55484,-90.292725,180.3759C-90.304756,180.19696,-90.315605,180.042282,-90.316826,180.032166L-90.319046,180.013763L-90.29628,180.013763C-90.283752,180.013748,-90.25869,180.012115,-90.240585,180.010117C-90.222481,180.008118,-90.191841,180.005646,-90.172501,180.004608L-90.137344,180.002731L-90.128738,180.131226C-90.124008,180.201889,-90.119133,180.269699,-90.117897,180.281921L-90.115662,180.304123L-90.05497,180.20639C-90.021591,180.152634,-89.977379,180.08139,-89.956726,180.048065L-89.919182,179.987488L-89.883324,179.985062C-89.863602,179.983734,-89.824806,179.980759,-89.797112,179.978455C-89.769424,179.976166,-89.739342,179.974884,-89.73027,179.975632L-89.713783,179.976974L-89.825653,180.145996L-89.937531,180.315033L-89.796638,180.490601C-89.719147,180.587158,-89.655746,180.667526,-89.655746,180.669174C-89.655746,180.670837,-89.657356,180.672195,-89.659317,180.672195C-89.676155,180.672195,-89.856628,180.684464,-89.861404,180.685928C-89.865883,180.687317,-89.896164,180.651016,-89.971275,180.554199C-90.028305,180.480698,-90.076393,180.421448,-90.07814,180.422516C-90.079887,180.423599,-90.086746,180.433975,-90.093384,180.445587L-90.105461,180.466675L-90.097374,180.581726C-90.091408,180.66658,-90.090439,180.697479,-90.093674,180.699478C-90.099167,180.702866,-90.137032,180.7061,-90.21048,180.709442C-90.257515,180.711578,-90.267807,180.71109,-90.26918,180.70665z"/>
+            <path fill="#00d4ff" d="M-92.820084,183.14711L-92.820084,183.104507L-89.824234,183.104507L-86.828384,183.104523L-86.828384,183.147125L-86.828384,183.189728L-89.824234,183.189713L-92.820084,183.189713L-92.820084,183.14711z"/>
+        </svg>
+        <span>Powered by <strong>Workshop-DIY.org</strong></span>
+    </div>
+    <p style="color: var(--text-dim); margin-top: 20px;">Empowering kids to build amazing things! ❤️</p>
+    <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 10px;">MIT License - Feel free to use, modify, and share!</p>
+</footer>
+
+</body>
+</html>
